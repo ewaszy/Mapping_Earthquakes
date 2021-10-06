@@ -1,21 +1,21 @@
-// Add console.log to check to see if our code is working.
+// Add console.log to check to see if the code is working.
 console.log("working");
 
-// We create the tile layer that will be the background of our map.
+// Create the tile layer that will be the background of the map.
 let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
 	accessToken: API_KEY
 });
 
-// We create the second tile layer that will be the background of our map.
+// Create the second tile layer that will be the background of the map.
 let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
 	accessToken: API_KEY
 });
 
-// We create the third tile layer that will be the background of our map.
+// Create the third tile layer that will be the background of the map.
 let dark = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/dark-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
@@ -36,20 +36,19 @@ let baseMaps = {
   "Dark": dark
 };
 
-// 1. Add a 2nd layer group for the tectonic plate data.
+// 1. Add a 2nd layer group for the tectonic plate data and a 3rd Layer for major earthquakes.
 let allEarthquakes = new L.LayerGroup();
 let tectonicPlates = new L.LayerGroup();
 let majorEarthquakes = new L.LayerGroup();
 
-// 2. Add a reference to the tectonic plates group to the overlays object.
+// 2. Add a reference to the tectonic plates group and major earthquakes to the overlays object.
 let overlays = {
   "Earthquakes": allEarthquakes,
   "Tectonic Plates": tectonicPlates,
   "Major Earthquakes": majorEarthquakes
 };
 
-// Then we add a control to the map that will allow the user to change which
-// layers are visible.
+// Add a control to the map that will allow the user to change which layers are visible.
 L.control.layers(baseMaps, overlays).addTo(map);
 
 // Retrieve the earthquake GeoJSON data.
@@ -101,21 +100,21 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 
   // Creating a GeoJSON layer with the retrieved data.
   L.geoJson(data, {
-    	// We turn each feature into a circleMarker on the map.
+    	// Turn each feature into a circleMarker on the map.
     	pointToLayer: function(feature, latlng) {
       		console.log(data);
       		return L.circleMarker(latlng);
         },
-      // We set the style for each circleMarker using our styleInfo function.
+      // Set the style for each circleMarker using our styleInfo function.
     style: styleInfo,
-     // We create a popup for each circleMarker to display the magnitude and location of the earthquake
+     // Create a popup for each circleMarker to display the magnitude and location of the earthquake
      //  after the marker has been created and styled.
      onEachFeature: function(feature, layer) {
       layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
   }).addTo(allEarthquakes);
 
-  // Then we add the earthquake layer to our map.
+  // Add the earthquake layer to the map.
   allEarthquakes.addTo(map);
 
 // 3. Retrieve the major earthquake GeoJSON data >4.5 mag for the week.
@@ -153,9 +152,9 @@ function getRadius(magnitude) {
   return magnitude * 4;
 }  
   
-// 7. Creating a GeoJSON layer with the retrieved data that adds a circle to the map 
-// sets the style of the circle, and displays the magnitude and location of the earthquake
-//  after the marker has been created and styled.
+// 7. Creating a GeoJSON layer with the retrieved data that adds a circle to the map and
+// sets the style of the circle and displays the magnitude and location of the earthquake
+// after the marker has been created and styled.
 L.geoJson(data, {
   pointToLayer: function(feature, latlang) {
     return L.circleMarker(latlang);
@@ -170,12 +169,12 @@ majorEarthquakes.addTo(map);
 // 9. Close the braces and parentheses for the major earthquake data.
 });
 
-  // Here we create a legend control object.
+  // Create a legend control object.
 let legend = L.control({
   position: "bottomright"
 });
 
-// Then add all the details for the legend
+// Add details for the legend
 legend.onAdd = function() {
   let div = L.DomUtil.create("div", "info legend");
 
@@ -189,7 +188,7 @@ legend.onAdd = function() {
     "#ea2c2c"
   ];
 
-// Looping through our intervals to generate a label with a colored square for each interval.
+// Looping through intervals to generate a label with a colored square for each interval.
   for (var i = 0; i < magnitudes.length; i++) {
     console.log(colors[i]);
     div.innerHTML +=
@@ -199,21 +198,21 @@ legend.onAdd = function() {
     return div;
   };
 
-  // Finally, we our legend to the map.
+  // Add the legend to the map.
   legend.addTo(map);
 
 
-  // 3. Use d3.json to make a call to get our Tectonic Plate geoJSON data.
+  // 3. Use d3.json to make a call to get Tectonic Plate geoJSON data.
   d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(data) {
     console.log(data);
     // Pass the tectonic plate date to the geoJSON() layer  
     L.geoJson(data, {
       // Style the lines with a color and weight that will make it stand out on all maps
       style: {color: "yellow", weight: 4},
-    // Add the tectonic layer group variable you created in Step 1 to the map
+    // Add the tectonic layer group variable created in Step 1 to the map
     }).addTo(tectonicPlates); 
   });
-  // Next, add the tectonic layer group variable to the map
+  // Add the tectonic layer group variable to the map
   tectonicPlates.addTo(map);
 });
 
